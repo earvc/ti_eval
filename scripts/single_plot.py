@@ -6,11 +6,15 @@ import matplotlib.pyplot as plt
 ATOD_VREF = 2.5
 ATOD_RANGE = 512
 MIN_ATOD_VAL = 500
-TIME_INTERVAL = 5  # seconds
+
+TIME_INTERVAL = int(sys.argv[2])# seconds
 
 # function to convert from raw atod to voltage
 def atod_to_volts(atod):
     return ((float(atod) * ATOD_VREF) / float(ATOD_RANGE))
+
+# for file handling
+fh_list = []
 
 # open data file for reading
 fh = open(sys.argv[1], "r")
@@ -24,8 +28,9 @@ idx = float(0.0)
 
 # loop to grab voltage line by line
 for line in fh.readlines():
-    m = re.match(r'.*Temp:(\d+)@@.*', line)
+    m = re.match(r'.*Battery:(\d+),.*', line)
     x_axis.append(float(idx/60))
+    print atod_to_volts(m.groups(0)[0])
     
     if m.groups(0) > MIN_ATOD_VAL:
         data.append(atod_to_volts(m.groups(0)[0]))
